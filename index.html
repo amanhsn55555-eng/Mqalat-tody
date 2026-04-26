@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>المجلة • منصتي</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI','Tajawal',serif}
+    body{background:linear-gradient(145deg,#f5f7fa,#e8eef5);min-height:100vh;color:#0f172a;overflow-x:hidden;width:100%;max-width:100vw;-webkit-tap-highlight-color:transparent;padding-bottom:30px;padding-top:70px}
+    .mag-header{position:fixed;top:0;left:0;right:0;z-index:999;background:linear-gradient(145deg,#f8fafc,#e2e8f0);box-shadow:inset 2px 2px 5px #fff,inset -2px -2px 5px #94a3b8,3px 3px 8px rgba(0,0,0,.1);border-radius:0 0 25px 25px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+    .mag-header h2{font-size:18px;font-weight:800;display:flex;align-items:center;gap:6px}
+    .mag-header h2 i{color:#ec4899}
+    .back-btn{cursor:pointer;color:#64748b;font-size:18px;padding:4px}
+    .publish-btn{background:linear-gradient(135deg,#ec4899,#db2777);color:#fff;border:none;padding:8px 14px;border-radius:22px;font-weight:700;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px}
+    .container{padding:8px 10px;max-width:550px;margin:0 auto}
+    .article-card{background:linear-gradient(145deg,#fdfcfb,#f7f4ed);box-shadow:inset 2px 2px 5px #fff,inset -2px -2px 5px #d1c7b7,3px 3px 8px rgba(0,0,0,.08);border-radius:4px;padding:20px 16px;margin-bottom:18px;border:1px solid #e8e0d5;position:relative;border-right:6px double #c4a97d;border-bottom:3px double #c4a97d}
+    .article-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .article-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;overflow:hidden;border:2px solid #c4a97d;flex-shrink:0}
+    .article-avatar img{width:100%;height:100%;object-fit:cover}
+    .article-user{flex:1;min-width:0}
+    .article-username{font-weight:800;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+    .user-badge{font-size:9px;padding:2px 7px;border-radius:12px;font-weight:700}
+    .article-time{font-size:9px;color:#8b7355;display:flex;align-items:center;gap:3px}
+    .article-content{font-size:14px;line-height:2;color:#4e342e;word-break:break-word;font-family:'Georgia','Tajawal',serif;margin:10px 0}
+    .article-content.collapsed{max-height:calc(14px*2*6);overflow:hidden;position:relative}
+    .article-content.collapsed::after{content:'';position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(transparent,#fdfcfb)}
+    .read-more{color:#8b5cf6;font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-top:4px}
+    .article-footer{display:flex;justify-content:space-around;align-items:center;border-top:1px solid #e8e0d5;padding-top:10px;margin-top:8px;gap:4px}
+    .action-btn{display:flex;align-items:center;gap:4px;padding:6px 10px;border-radius:20px;background:#f5f0e8;color:#5d4037;font-weight:600;font-size:11px;cursor:pointer;border:none;transition:.2s;white-space:nowrap}
+    .action-btn:hover{background:#e8d5c4}
+    .action-btn.liked{color:#e11d48;background:#fce4ec}
+    .action-btn i{font-size:14px}
+    .tip-btn{background:#fef3c7!important;color:#b45309!important}
+    .tip-btn:hover{background:#fde68a!important}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:3000;display:none;align-items:center;justify-content:center;padding:16px}
+    .modal.show{display:flex}
+    .modal-box{background:linear-gradient(145deg,#f8fafc,#e2e8f0);box-shadow:inset 2px 2px 5px #fff,inset -2px -2px 5px #94a3b8,3px 3px 8px rgba(0,0,0,.1);border-radius:24px;padding:18px 14px;width:100%;max-width:400px;max-height:80vh;overflow-y:auto;position:relative}
+    .modal-box h3{margin-bottom:12px;font-size:17px;font-weight:800;text-align:center}
+    .modal-box textarea{width:100%;padding:12px;border-radius:16px;border:2px solid #e2e8f0;font-size:14px;resize:none;min-height:140px;background:#fff;font-family:'Georgia','Tajawal',serif;line-height:2}
+    .modal-box textarea:focus{outline:none;border-color:#ec4899}
+    .modal-box input{width:100%;padding:12px;border-radius:16px;border:2px solid #e2e8f0;font-size:16px;text-align:center;font-weight:700}
+    .counter{text-align:left;color:#64748b;font-size:11px;margin:4px 0}
+    .btn-primary{width:100%;padding:12px;border:none;border-radius:18px;background:linear-gradient(135deg,#ec4899,#db2777);color:#fff;font-weight:800;font-size:15px;cursor:pointer;margin-top:8px}
+    .btn-gold{background:linear-gradient(135deg,#fbbf24,#f59e0b)!important;color:#0f172a!important}
+    .btn-secondary{background:#f1f5f9;color:#64748b;border:none;padding:10px;border-radius:18px;font-weight:600;font-size:13px;cursor:pointer;width:100%;margin-top:6px}
+    .close-btn{position:absolute;top:8px;left:10px;background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8;z-index:5}
+    .comment-item{background:#fff;border-radius:14px;padding:10px;margin:6px 0;box-shadow:0 1px 4px rgba(0,0,0,.03)}
+    .comment-header{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+    .comment-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden;border:2px solid;flex-shrink:0}
+    .comment-avatar img{width:100%;height:100%;object-fit:cover}
+    .comment-author{font-weight:700;font-size:12px}
+    .comment-text{font-size:12px;color:#475569;margin:2px 0}
+    .comment-time{font-size:9px;color:#94a3b8}
+    .comment-input-row{display:flex;gap:6px;margin-top:10px}
+    .comment-input-row input{flex:1;padding:10px;border-radius:18px;border:2px solid #e2e8f0;font-size:13px}
+    .comment-input-row button{background:#1e293b;color:#fff;border:none;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:16px;flex-shrink:0}
+    .profile-card{background:#1a1a2e;color:#fff;border-radius:20px;padding:16px;text-align:center}
+    .p-avatar{width:60px;height:60px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:30px;border:3px solid #fbbf24;overflow:hidden}
+    .p-avatar img{width:100%;height:100%;object-fit:cover}
+    .p-name{font-size:18px;font-weight:800;margin:4px 0}
+    .p-id{color:#94a3b8;font-size:12px}
+    .p-stats{display:flex;justify-content:space-around;margin:12px 0;gap:8px}
+    .p-stat strong{font-size:18px;display:block}
+    .p-stat small{font-size:10px;color:#94a3b8}
+    .tip-info{text-align:center;background:#fef3c7;border-radius:14px;padding:10px;margin:10px 0;font-size:13px}
+    .empty-state{text-align:center;padding:40px 16px;color:#94a3b8}
+    .empty-state i{font-size:45px;opacity:.3;margin-bottom:10px}
+    #toast{position:fixed;bottom:20px;left:16px;right:16px;text-align:center;background:#1e293b;color:#fff;padding:12px 18px;border-radius:25px;z-index:5000;opacity:0;transition:.3s;pointer-events:none;max-width:340px;margin:0 auto;font-weight:600;font-size:13px}
+    #toast.show{opacity:1;bottom:28px}
+  </style>
+</head>
+<body>
+
+<div class="mag-header">
+  <div class="back-btn" onclick="history.back()"><i class="fas fa-arrow-right"></i></div>
+  <h2><i class="fas fa-newspaper"></i> المجلة</h2>
+  <button class="publish-btn" onclick="openPublish()"><i class="fas fa-pen"></i> كتابة</button>
+</div>
+
+<div class="container" id="articlesContainer">
+  <div style="text-align:center;padding:40px;color:#94a3b8"><i class="fas fa-spinner fa-pulse" style="font-size:30px"></i></div>
+</div>
+
+<!-- نشر -->
+<div class="modal" id="publishModal"><div class="modal-box" style="position:relative">
+  <button class="close-btn" onclick="closePublish()">&times;</button>
+  <h3>📰 مقال جديد</h3>
+  <textarea id="articleText" placeholder="اكتب مقالك هنا..." maxlength="3000" oninput="updateCounter()"></textarea>
+  <div class="counter"><span id="charCount">0</span>/3000</div>
+  <input type="hidden" id="editArticleId">
+  <button class="btn-primary" onclick="publishArticle()"><i class="fas fa-paper-plane"></i> نشر</button>
+  <button class="btn-secondary" onclick="closePublish()">إلغاء</button>
+</div></div>
+
+<!-- تعليقات -->
+<div class="modal" id="commentsModal"><div class="modal-box" style="position:relative">
+  <button class="close-btn" onclick="closeComments()">&times;</button>
+  <h3>💬 التعليقات</h3>
+  <div id="commentsList" style="max-height:50vh;overflow-y:auto"></div>
+  <div class="comment-input-row"><input id="commentInput" placeholder="أضف تعليقاً..."><button onclick="submitComment()"><i class="fas fa-arrow-left"></i></button></div>
+</div></div>
+
+<!-- ملف شخصي -->
+<div class="modal" id="profileModal"><div class="modal-box" style="position:relative">
+  <button class="close-btn" onclick="closeProfile()">&times;</button>
+  <div id="profileContent"></div>
+</div></div>
+
+<!-- دعم -->
+<div class="modal" id="tipModal"><div class="modal-box" style="position:relative">
+  <button class="close-btn" onclick="closeTip()">&times;</button>
+  <h3>💎 دعم المقال</h3>
+  <input type="hidden" id="tipArticleId">
+  <p style="text-align:center;color:#64748b;font-size:13px;margin-bottom:10px">أدخل كمية الإكسير للدعم</p>
+  <div class="tip-info">🧪 رصيدك الحالي: <strong id="tipBalance">0</strong> إكسير</div>
+  <input type="number" id="tipAmountInput" placeholder="أدخل الكمية" min="1" style="margin-bottom:10px">
+  <button class="btn-primary btn-gold" onclick="sendTip()"><i class="fas fa-gift"></i> إرسال الدعم</button>
+  <button class="btn-secondary" onclick="closeTip()">إلغاء</button>
+</div></div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, collection, query, where, orderBy, onSnapshot, addDoc, increment, arrayUnion, arrayRemove, getDocs } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+
+const fc={apiKey:"AIzaSyCPBrZMo6IYCwCDYV3HEfNcUmLUITR6VRc",authDomain:"elahbes.firebaseapp.com",projectId:"elahbes",storageBucket:"elahbes.firebasestorage.app",messagingSenderId:"800207969145",appId:"1:800207969145:web:aa19b725d1c92dd48fada8",measurementId:"G-EFT566SJMP"};
+const app=initializeApp(fc),auth=getAuth(app),db=getFirestore(app);
+
+let me=null,myData=null,articles=[],activeArticle=null,unsub=null,followers={},myResources={elixir:0};
+
+function toast(m,ok){ok=ok!==false;var t=document.getElementById('toast');t.textContent=m;t.style.background=ok?'#10b981':'#ef4444';t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2500)}
+function av(u){if(!u)return'👤';if(u.avatarType==='image'&&u.avatarUrl)return'<img src="'+u.avatarUrl+'" style="width:100%;height:100%;object-fit:cover">';return u.emoji||'👤'}
+function ft(ts){if(!ts)return'';return new Date(ts).toLocaleString('ar-SA',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}
+
+// ========== نشر ==========
+window.openPublish=function(id){
+  document.getElementById('editArticleId').value=id||'';
+  document.getElementById('articleText').value=id?(articles.find(function(x){return x.id===id})||{}).content||'':'';
+  updateCounter();document.getElementById('publishModal').classList.add('show');
+};
+window.closePublish=function(){document.getElementById('publishModal').classList.remove('show')};
+window.updateCounter=function(){document.getElementById('charCount').textContent=document.getElementById('articleText').value.length};
+
+window.publishArticle=async function(){
+  var txt=document.getElementById('articleText').value.trim();
+  if(!txt)return toast('اكتب مقالاً',false);
+  var editId=document.getElementById('editArticleId').value;
+  var old=editId?articles.find(function(x){return x.id===editId})||{}:{};
+  var data={
+    content:txt,userId:myData.userId||me.uid.slice(0,6),
+    username:myData.username||'مستخدم',emoji:myData.emoji||'😎',
+    avatarType:myData.avatarType||'emoji',avatarUrl:myData.avatarUrl||'',
+    colors:myData.colors||{},verified:myData.verified||false,
+    likes:old.likes||0,likedBy:old.likedBy||[],
+    comments:old.comments||[],views:old.views||0,tips:old.tips||0,
+    timestamp:old.timestamp||Date.now(),updatedAt:Date.now()
+  };
+  if(editId){await updateDoc(doc(db,"magazine",editId),data);toast('✅ تم التعديل')}
+  else{await addDoc(collection(db,"magazine"),data);toast('📰 تم النشر')}
+  closePublish();
+};
+
+// ========== تعليقات ==========
+window.openComments=function(id){
+  activeArticle=id;var a=articles.find(function(x){return x.id===id});if(!a)return;
+  var cs=(a.comments||[]).sort(function(a,b){return(b.timestamp||0)-(a.timestamp||0)});
+  var html='';
+  cs.forEach(function(c){html+='<div class="comment-item"><div class="comment-header"><div class="comment-avatar" style="border-color:'+(c.colors?.frame||'#fbbf24')+'">'+(c.avatarType==='image'&&c.avatarUrl?'<img src="'+c.avatarUrl+'">':c.emoji||'👤')+'</div><div><div class="comment-author">'+(c.username||'مستخدم')+'</div><div class="comment-time">'+ft(c.timestamp)+'</div></div>'+(c.userId===myData?.userId?'<i class="fas fa-trash" style="color:#ef4444;cursor:pointer;margin-right:auto;font-size:12px" onclick="delComment(\''+id+'\',\''+c.id+'\')"></i>':'')+'</div><div class="comment-text">'+c.text+'</div></div>'});
+  document.getElementById('commentsList').innerHTML=html||'<p style="color:#94a3b8;text-align:center;padding:16px">لا تعليقات</p>';
+  document.getElementById('commentsModal').classList.add('show');
+};
+window.closeComments=function(){document.getElementById('commentsModal').classList.remove('show')};
+window.submitComment=async function(){
+  var i=document.getElementById('commentInput'),txt=i.value.trim();if(!txt||!activeArticle)return;
+  var c={id:'c'+Date.now()+Math.random().toString(36),userId:myData.userId||me.uid.slice(0,6),username:myData.username||'مستخدم',emoji:myData.emoji||'😎',avatarType:myData.avatarType||'emoji',avatarUrl:myData.avatarUrl||'',colors:myData.colors||{},text:txt,timestamp:Date.now()};
+  await updateDoc(doc(db,"magazine",activeArticle),{comments:arrayUnion(c)});i.value='';openComments(activeArticle);
+};
+window.delComment=async function(aid,cid){var a=articles.find(function(x){return x.id===aid});if(!a)return;var c=(a.comments||[]).find(function(x){return x.id===cid});if(c)await updateDoc(doc(db,"magazine",aid),{comments:arrayRemove(c)});openComments(aid)};
+
+// ========== لايك ==========
+window.toggleLike=async function(id){if(!me)return;var a=articles.find(function(x){return x.id===id});if(!a)return;var l=(a.likedBy||[]).includes(me.uid);if(l){await updateDoc(doc(db,"magazine",id),{likedBy:arrayRemove(me.uid),likes:increment(-1)})}else{await updateDoc(doc(db,"magazine",id),{likedBy:arrayUnion(me.uid),likes:increment(1)})}};
+
+// ========== دعم - بسيط كانه هدية ==========
+window.openTip=function(id){
+  activeArticle=id;
+  document.getElementById('tipArticleId').value=id;
+  document.getElementById('tipAmountInput').value='';
+  document.getElementById('tipBalance').textContent=(myResources.elixir||0).toLocaleString();
+  document.getElementById('tipModal').classList.add('show');
+};
+window.closeTip=function(){document.getElementById('tipModal').classList.remove('show')};
+
+window.sendTip=async function(){
+  var amount=parseInt(document.getElementById('tipAmountInput').value);
+  if(!amount||amount<1)return toast('أدخل كمية صحيحة',false);
+  if((myResources.elixir||0)<amount)return toast('رصيد الإكسير غير كافٍ',false);
+  
+  var aid=document.getElementById('tipArticleId').value;
+  var a=articles.find(function(x){return x.id===aid});
+  if(!a)return toast('المقال غير موجود',false);
+  
+  try {
+    // البحث عن UID صاحب المقال
+    var uq=await getDocs(query(collection(db,"users"),where("userId","==",a.userId)));
+    if(uq.empty)return toast('لم يتم العثور على صاحب المقال',false);
+    var ownerUid=uq.docs[0].id;
+    
+    // خصم من الداعم وإضافة لصاحب المقال
+    await updateDoc(doc(db,"resources",me.uid),{elixir:increment(-amount)});
+    await updateDoc(doc(db,"resources",ownerUid),{elixir:increment(amount)});
+    
+    // تحديث عداد الدعم في المقال
+    await updateDoc(doc(db,"magazine",aid),{tips:increment(amount)});
+    
+    // تحديث الرصيد المحلي
+    myResources.elixir-=amount;
+    
+    toast('💎 تم إرسال '+amount+' إكسير لصاحب المقال!');
+    closeTip();
+  } catch(e) {
+    toast('❌ فشل: '+e.message,false);
+  }
+};
+
+// ========== ملف شخصي ==========
+window.openProfile=async function(uid){
+  var d=await getDoc(doc(db,"users",uid));var u=d.exists()?d.data():{username:'مستخدم',emoji:'👤',userId:uid.slice(0,6)};
+  var myArts=articles.filter(function(x){return x.userId===(u.userId||uid.slice(0,6))});
+  var fc2=0,fg=0;
+  try{var fd=await getDoc(doc(db,"social","followers"));if(fd.exists()){followers=fd.data();fc2=Object.values(followers).filter(function(v){return v.includes(u.userId)}).length;fg=(followers[uid]||[]).length}}catch(e){}
+  var isMe=uid===me.uid;
+  document.getElementById('profileContent').innerHTML=
+    '<div class="profile-card"><div class="p-avatar" style="border-color:'+(u.colors?.frame||'#fbbf24')+'">'+av(u)+'</div><div class="p-name">'+(u.username||'مستخدم')+'</div><div class="p-id">#'+(u.userId||uid.slice(0,6))+'</div>'+
+    '<div class="p-stats"><div class="p-stat"><strong>'+myArts.length+'</strong><small>مقالات</small></div><div class="p-stat"><strong>'+fc2+'</strong><small>متابعين</small></div><div class="p-stat"><strong>'+fg+'</strong><small>يتابع</small></div></div>'+
+    (!isMe?'<button onclick="followUser(\''+uid+'\')" style="background:#ec4899;color:#fff;border:none;padding:8px 20px;border-radius:20px;font-weight:700;cursor:pointer;font-size:13px">'+(followers[me.uid]?.includes(u.userId)?'متابَع':'متابعة')+'</button>':'')+'</div>'+
+    '<h4 style="margin:12px 0 6px">📰 مقالات العضو</h4>'+myArts.slice(0,10).map(function(a){return'<div style="background:#fff;border-radius:12px;padding:10px;margin:4px 0;font-size:13px">'+a.content.substring(0,80)+'...</div>'}).join('')||'<p style="color:#94a3b8">لا مقالات</p>';
+  document.getElementById('profileModal').classList.add('show');
+};
+window.closeProfile=function(){document.getElementById('profileModal').classList.remove('show')};
+window.followUser=async function(uid){var targetId=uid;if(!followers[me.uid])followers[me.uid]=[];var idx=followers[me.uid].indexOf(targetId);if(idx===-1)followers[me.uid].push(targetId);else followers[me.uid].splice(idx,1);await setDoc(doc(db,"social","followers"),{[me.uid]:followers[me.uid]},{merge:true});openProfile(uid)};
+
+// ========== حذف ==========
+window.deleteArticle=async function(id){if(!confirm('حذف المقال؟'))return;await deleteDoc(doc(db,"magazine",id));toast('🗑️ تم')};
+
+// ========== عرض ==========
+function renderArticles(){
+  var c=document.getElementById('articlesContainer');
+  if(!articles.length){c.innerHTML='<div class="empty-state"><i class="fas fa-newspaper"></i><p>لا مقالات بعد</p><small style="color:#94a3b8">كن أول من يكتب!</small></div>';return}
+  articles.sort(function(a,b){return(b.timestamp||0)-(a.timestamp||0)});
+  c.innerHTML=articles.map(function(a){
+    var liked=(a.likedBy||[]).includes(me?.uid);
+    var isOwner=a.userId===(myData?.userId||me?.uid?.slice(0,6));
+    var words=a.content.split(' ');var short=words.slice(0,50).join(' ');var isLong=words.length>50;
+    return'<div class="article-card"><div class="article-header"><div class="article-avatar" onclick="openProfile(\''+(a.userId||'')+'\')">'+(a.avatarType==='image'&&a.avatarUrl?'<img src="'+a.avatarUrl+'">':a.emoji||'😎')+'</div><div class="article-user"><div class="article-username" onclick="openProfile(\''+(a.userId||'')+'\')" style="color:'+(a.colors?.name||'#3e2723')+'">'+(a.username||'مستخدم')+(a.verified?' <i class="fas fa-check-circle" style="color:#3b82f6;font-size:11px"></i>':'')+'<span class="user-badge" style="background:'+(a.colors?.frame||'#c4a97d')+';color:#3e2723">#'+(a.userId||'')+'</span></div><div class="article-time">'+ft(a.timestamp)+'</div></div></div>'+
+    '<div class="article-content'+(isLong?' collapsed':'')+'" id="content-'+a.id+'">'+a.content+'</div>'+
+    (isLong?'<span class="read-more" onclick="toggleContent(\''+a.id+'\')"><i class="fas fa-book-open"></i> اقرأ المزيد...</span>':'')+
+    '<div class="article-footer"><div class="action-btn'+(liked?' liked':'')+'" onclick="toggleLike(\''+a.id+'\')"><i class="fas fa-heart"></i> '+(a.likes||0)+'</div><div class="action-btn" onclick="openComments(\''+a.id+'\')"><i class="fas fa-comment"></i> '+(a.comments||[]).length+'</div><div class="action-btn tip-btn" onclick="openTip(\''+a.id+'\')"><i class="fas fa-gift"></i> '+(a.tips||0)+'</div>'+(isOwner?'<div class="action-btn" onclick="openPublish(\''+a.id+'\')"><i class="fas fa-edit"></i></div><div class="action-btn" onclick="deleteArticle(\''+a.id+'\')"><i class="fas fa-trash"></i></div>':'')+'</div></div>';
+  }).join('');
+}
+
+window.toggleContent=function(id){
+  var el=document.getElementById('content-'+id);
+  var btn=el.nextElementSibling;
+  if(el.classList.contains('collapsed')){el.classList.remove('collapsed');btn.innerHTML='<i class="fas fa-chevron-up"></i> عرض أقل'}
+  else{el.classList.add('collapsed');btn.innerHTML='<i class="fas fa-book-open"></i> اقرأ المزيد...'}
+};
+
+onAuthStateChanged(auth,async function(user){
+  if(user){
+    me=user;
+    var d=await getDoc(doc(db,"users",user.uid));
+    myData=d.exists()?d.data():{username:'مستخدم',emoji:'😎',userId:user.uid.slice(0,6)};
+    var rd=await getDoc(doc(db,"resources",user.uid));
+    if(rd.exists())myResources=rd.data();
+    var fd=await getDoc(doc(db,"social","followers"));if(fd.exists())followers=fd.data();
+    var q=query(collection(db,"magazine"),orderBy("timestamp","desc"));
+    unsub=onSnapshot(q,function(s){articles=[];s.forEach(function(d){articles.push({id:d.id,...d.data()})});renderArticles()});
+  }else{document.getElementById('articlesContainer').innerHTML='<div class="empty-state"><i class="fas fa-sign-in-alt"></i><p>يرجى تسجيل الدخول</p></div>'}
+});
+</script>
+</body>
+</html>
