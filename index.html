@@ -128,7 +128,30 @@ import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, collection, qu
 
 const fc={apiKey:"AIzaSyCPBrZMo6IYCwCDYV3HEfNcUmLUITR6VRc",authDomain:"elahbes.firebaseapp.com",projectId:"elahbes",storageBucket:"elahbes.firebasestorage.app",messagingSenderId:"800207969145",appId:"1:800207969145:web:aa19b725d1c92dd48fada8",measurementId:"G-EFT566SJMP"};
 const app=initializeApp(fc),auth=getAuth(app),db=getFirestore(app);
+ // ========== نظام الكاش التلقائي للمجلة (24 ساعة) ==========
+const MAG_CACHE_KEY = 'mag_articles_cache';
+const MAG_CACHE_DURATION = 24 * 60 * 60 * 1000;
 
+const MagCache = {
+  save(html) {
+    try { localStorage.setItem(MAG_CACHE_KEY, JSON.stringify({ html, timestamp: Date.now() })); } catch (e) {}
+  },
+  load() {
+    try {
+      const c = localStorage.getItem(MAG_CACHE_KEY);
+      if (!c) return null;
+      const { html, timestamp } = JSON.parse(c);
+      if (Date.now() - timestamp > MAG_CACHE_DURATION) { localStorage.removeItem(MAG_CACHE_KEY); return null; }
+      return html;
+    } catch (e) { return null; }
+  }
+};
+
+// ✅ عرض الكاش فوراً
+(function() {
+  const cached = MagCache.load();
+  if (cached) document.getElementById('articlesContainer').innerHTML = cached;
+})();
 let me=null,myData=null,articles=[],activeArticle=null,unsub=null,followers={},myResources={elixir:0};
 
 function toast(m,ok){ok=ok!==false;var t=document.getElementById('toast');t.textContent=m;t.style.background=ok?'#10b981':'#ef4444';t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2500)}
@@ -258,7 +281,10 @@ function renderArticles(){
     '<div class="article-content'+(isLong?' collapsed':'')+'" id="content-'+a.id+'">'+a.content+'</div>'+
     (isLong?'<span class="read-more" onclick="toggleContent(\''+a.id+'\')"><i class="fas fa-book-open"></i> اقرأ المزيد...</span>':'')+
     '<div class="article-footer"><div class="action-btn'+(liked?' liked':'')+'" onclick="toggleLike(\''+a.id+'\')"><i class="fas fa-heart"></i> '+(a.likes||0)+'</div><div class="action-btn" onclick="openComments(\''+a.id+'\')"><i class="fas fa-comment"></i> '+(a.comments||[]).length+'</div><div class="action-btn tip-btn" onclick="openTip(\''+a.id+'\')"><i class="fas fa-gift"></i> '+(a.tips||0)+'</div>'+(isOwner?'<div class="action-btn" onclick="openPublish(\''+a.id+'\')"><i class="fas fa-edit"></i></div><div class="action-btn" onclick="deleteArticle(\''+a.id+'\')"><i class="fas fa-trash"></i></div>':'')+'</div></div>';
-  }).join('');
+   }).join('');
+  
+  // ✅ حفظ تلقائي
+  MagCache.save(c.innerHTML);
 }
 
 window.toggleContent=function(id){
@@ -277,8 +303,14 @@ onAuthStateChanged(auth,async function(user){
     if(rd.exists())myResources=rd.data();
     var fd=await getDoc(doc(db,"social","followers"));if(fd.exists())followers=fd.data();
     var q=query(collection(db,"magazine"),orderBy("timestamp","desc"));
-    unsub=onSnapshot(q,function(s){articles=[];s.forEach(function(d){articles.push({id:d.id,...d.data()})});renderArticles()});
-  }else{document.getElementById('articlesContainer').innerHTML='<div class="empty-state"><i class="fas fa-sign-in-alt"></i><p>يرجى تسجيل الدخول</p></div>'}
+ unsub=onSnapshot(q,function(s){
+  articles=[];s.forEach(function(d){articles.push({id:d.id,...d.data()})});renderArticles();
+  // ✅ تجديد الكاش بعد التحميل
+  setTimeout(function() {
+    var c = document.getElementById('articlesContainer');
+    if (c && c.innerHTML.includes('article-card')) MagCache.save(c.innerHTML);
+  }, 2000);
+});  }else{document.getElementById('articlesContainer').innerHTML='<div class="empty-state"><i class="fas fa-sign-in-alt"></i><p>يرجى تسجيل الدخول</p></div>'}
 });
 </script>
 </body>
